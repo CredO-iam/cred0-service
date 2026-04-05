@@ -18,8 +18,13 @@
 - Follow clean layering.
 - Do not mix business logic with controllers.
 - Avoid framework leakage into domain.
+- In backend code, do not create DDL scripts or database migrations; rely on Hibernate auto table creation.
+- When generating `toEntity`/`fromEntity` or `toDto`/`fromDto` mappings, create dedicated utility classes with a private constructor and static methods; do not make them Spring components.
 - The current frontend entry points are `admin-ui/src/main.js` and `admin-ui/src/App.vue`.
-- When generating frontend UI, always split pages into dedicated Vue components (use `admin-ui/src/components` and keep `App.vue` as composition/root shell where possible).
+- When generating frontend UI, pages MUST be container/composition components and MUST NOT keep all markup inline when parts can be extracted.
+- Repeated or structurally distinct page parts (for example list rows, form blocks, cards, table rows, dialogs) MUST be moved into reusable child components under `admin-ui/src/components`.
+- For list+form screens, split at minimum into: page container + reusable list item row component + reusable create/edit form component.
+- Example requirement: a clients screen must be structured like `ClientsPage` (data orchestration) + `ClientRow` (single row rendering/actions) + `ClientForm` (create/edit form rendering/events).
 - When the same Tailwind/UI class combinations repeat across components, extract them into shared reusable definitions (for example in `admin-ui/src/shared`) instead of duplicating inline strings.
 - Use the existing `@` alias for imports from `admin-ui/src` as defined in `admin-ui/vite.config.js` and `admin-ui/jsconfig.json`.
 - Styling is configured through Tailwind CSS v4 via `@import "tailwindcss";` in `admin-ui/src/style.css` and the `@tailwindcss/vite` plugin.
@@ -33,7 +38,7 @@
 
 ## Tests
 
-- All new logic must be covered by tests.
+- All new logic must be covered by unit tests.
 - Do not modify existing tests unless broken.
 - There is currently no test runner or test configuration checked in under `admin-ui/`; do not assume Vitest, Cypress, or Playwright are already set up.
 
