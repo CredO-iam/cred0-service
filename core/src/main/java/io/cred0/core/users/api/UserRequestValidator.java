@@ -75,10 +75,11 @@ public final class UserRequestValidator {
         boolean hasType = StringUtils.hasText(credentials.type());
         boolean hasValue = StringUtils.hasText(credentials.value());
 
-        if (!hasType || !hasValue) {
-            if (required) {
-                throw new UserValidationException("credentials type and value are required");
-            }
+        if (required && (!hasType || !hasValue)) {
+            throw new UserValidationException("credentials type and value are required");
+        }
+
+        if (!required && hasType != hasValue) {
             throw new UserValidationException("credentials type and value must both be provided");
         }
     }

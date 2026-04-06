@@ -160,7 +160,7 @@ const validateForm = () => {
     errorMessage.value = 'credentials type and value are required'
     return false
   }
-  if (isEditing.value && hasType !== hasValue) {
+  if (hasType !== hasValue) {
     errorMessage.value = 'credentials type and value must both be provided'
     return false
   }
