@@ -107,8 +107,11 @@ public final class UserEntityMapper {
                 return List.of();
             }
 
+            if (attributes.stream().anyMatch(attribute -> attribute == null)) {
+                throw new UserValidationException("failed to deserialize attributes");
+            }
+
             return attributes.stream()
-                    .filter(attribute -> attribute != null)
                     .map(attribute -> new UserAttributeDto(
                             attribute.name(),
                             attribute.value()
