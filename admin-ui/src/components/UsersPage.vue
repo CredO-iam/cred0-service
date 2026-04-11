@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getSurfaceThemeClass } from '@/shared/uiClasses'
+import { DEFAULT_USER_CREDENTIAL_TYPE, USER_CREDENTIAL_TYPES } from '@/shared/userCredentialTypes'
 import UserRow from '@/components/users/UserRow.vue'
 import UserForm from '@/components/users/UserForm.vue'
 
@@ -13,9 +14,6 @@ const props = defineProps({
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 const USERS_API_URL = `${API_BASE_URL}/api/users`
-const ALLOWED_CREDENTIAL_TYPES = ['Bcrypt', 'PBKDF2', 'Argon2id', 'SCrypt']
-const DEFAULT_CREDENTIAL_TYPE = 'Bcrypt'
-
 const users = ref([])
 const isLoading = ref(false)
 const isSaving = ref(false)
@@ -59,7 +57,7 @@ const updateForm = (nextForm) => {
 const openCreateModal = () => {
   clearMessages()
   resetForm()
-  form.value.credentials.type = DEFAULT_CREDENTIAL_TYPE
+  form.value.credentials.type = DEFAULT_USER_CREDENTIAL_TYPE
   isModalOpen.value = true
 }
 
@@ -159,8 +157,8 @@ const validateForm = () => {
   }
   const hasType = Boolean(form.value.credentials.type.trim())
   const hasValue = Boolean(form.value.credentials.value.trim())
-  if (hasType && !ALLOWED_CREDENTIAL_TYPES.includes(form.value.credentials.type.trim())) {
-    errorMessage.value = 'credentials type must be one of: Bcrypt, PBKDF2, Argon2id, SCrypt'
+  if (hasType && !USER_CREDENTIAL_TYPES.includes(form.value.credentials.type.trim())) {
+    errorMessage.value = `Credential type must be one of: ${USER_CREDENTIAL_TYPES.join(', ')}`
     return false
   }
   if (!isEditing.value && (!hasType || !hasValue)) {

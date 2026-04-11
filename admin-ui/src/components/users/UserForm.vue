@@ -1,4 +1,6 @@
 <script setup>
+import { USER_CREDENTIAL_TYPES } from '@/shared/userCredentialTypes'
+
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -19,8 +21,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'submit', 'close'])
-const credentialTypeOptions = ['Bcrypt', 'PBKDF2', 'Argon2id', 'SCrypt']
-
 const updateField = (field, value) => {
   emit('update:modelValue', {
     ...props.modelValue,
@@ -227,7 +227,7 @@ const removeAttribute = (index) => {
           @change="updateField('credentials', { ...props.modelValue.credentials, type: $event.target.value })"
         >
           <option v-if="props.isEditing" value="">No change</option>
-          <option v-for="type in credentialTypeOptions" :key="type" :value="type">{{ type }}</option>
+          <option v-for="type in USER_CREDENTIAL_TYPES" :key="type" :value="type">{{ type }}</option>
         </select>
       </label>
 

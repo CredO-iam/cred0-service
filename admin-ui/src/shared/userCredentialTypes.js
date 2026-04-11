@@ -1,0 +1,2 @@
+export const USER_CREDENTIAL_TYPES = ['Bcrypt', 'PBKDF2', 'Argon2id', 'SCrypt']
+export const DEFAULT_USER_CREDENTIAL_TYPE = USER_CREDENTIAL_TYPES[0]
