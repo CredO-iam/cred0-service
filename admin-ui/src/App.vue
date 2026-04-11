@@ -5,6 +5,8 @@ import SideMenu from './components/SideMenu.vue'
 import SettingsPage from './components/SettingsPage.vue'
 import ClientsPage from './components/ClientsPage.vue'
 import UsersPage from './components/UsersPage.vue'
+import GroupsPage from './components/GroupsPage.vue'
+import RolesPage from './components/RolesPage.vue'
 
 const activeView = ref('settings')
 const theme = ref('light')
@@ -13,6 +15,8 @@ const navItems = [
   { id: 'settings', label: 'Settings' },
   { id: 'clients', label: 'Clients' },
   { id: 'users', label: 'Users' },
+  { id: 'groups', label: 'Groups' },
+  { id: 'roles', label: 'Roles' },
 ]
 
 const isDarkTheme = computed(() => theme.value === 'dark')
@@ -67,6 +71,8 @@ const selectView = (viewId) => {
         <ClientsPage v-if="activeView === 'clients'" :is-dark-theme="isDarkTheme" />
 
         <UsersPage v-if="activeView === 'users'" :is-dark-theme="isDarkTheme" />
+        <GroupsPage v-if="activeView === 'groups'" :is-dark-theme="isDarkTheme" />
+        <RolesPage v-if="activeView === 'roles'" :is-dark-theme="isDarkTheme" />
       </main>
     </div>
   </div>
