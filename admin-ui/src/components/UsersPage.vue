@@ -13,6 +13,8 @@ const props = defineProps({
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 const USERS_API_URL = `${API_BASE_URL}/api/users`
+const ALLOWED_CREDENTIAL_TYPES = ['Bcrypt', 'PBKDF2', 'Argon2id', 'SCrypt']
+const DEFAULT_CREDENTIAL_TYPE = 'Bcrypt'
 
 const users = ref([])
 const isLoading = ref(false)
@@ -57,6 +59,7 @@ const updateForm = (nextForm) => {
 const openCreateModal = () => {
   clearMessages()
   resetForm()
+  form.value.credentials.type = DEFAULT_CREDENTIAL_TYPE
   isModalOpen.value = true
 }
 
@@ -156,6 +159,10 @@ const validateForm = () => {
   }
   const hasType = Boolean(form.value.credentials.type.trim())
   const hasValue = Boolean(form.value.credentials.value.trim())
+  if (hasType && !ALLOWED_CREDENTIAL_TYPES.includes(form.value.credentials.type.trim())) {
+    errorMessage.value = 'credentials type must be one of: Bcrypt, PBKDF2, Argon2id, SCrypt'
+    return false
+  }
   if (!isEditing.value && (!hasType || !hasValue)) {
     errorMessage.value = 'credentials type and value are required'
     return false

@@ -19,6 +19,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'submit', 'close'])
+const credentialTypeOptions = ['Bcrypt', 'PBKDF2', 'Argon2id', 'SCrypt']
 
 const updateField = (field, value) => {
   emit('update:modelValue', {
@@ -214,9 +215,8 @@ const removeAttribute = (index) => {
 
       <label class="block">
         <span class="mb-1 block text-sm font-medium">Credential type</span>
-        <input
+        <select
           :value="props.modelValue.credentials.type"
-          type="text"
           :required="!props.isEditing"
           class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:ring-2"
           :class="
@@ -224,8 +224,11 @@ const removeAttribute = (index) => {
               ? 'border-slate-700 bg-slate-800 text-slate-100 focus:ring-blue-500/40'
               : 'border-slate-300 bg-white text-slate-900 focus:ring-blue-400/40'
           "
-          @input="updateField('credentials', { ...props.modelValue.credentials, type: $event.target.value })"
+          @change="updateField('credentials', { ...props.modelValue.credentials, type: $event.target.value })"
         >
+          <option v-if="props.isEditing" value="">No change</option>
+          <option v-for="type in credentialTypeOptions" :key="type" :value="type">{{ type }}</option>
+        </select>
       </label>
 
       <label class="block">
