@@ -1,0 +1,203 @@
+package io.cred0.core.bootstrap;
+
+import java.util.Optional;
+
+import io.cred0.core.groups.persistence.GroupEntity;
+import io.cred0.core.groups.persistence.JpaGroupRepository;
+import io.cred0.core.roles.persistence.JpaRoleRepository;
+import io.cred0.core.roles.persistence.RoleEntity;
+import io.cred0.core.users.persistence.JpaUserEntityRepository;
+import io.cred0.core.users.persistence.UserEntity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class AdminBootstrapInitializerTest {
+
+    @Mock
+    private JpaUserEntityRepository userRepository;
+
+    @Mock
+    private JpaGroupRepository groupRepository;
+
+    @Mock
+    private JpaRoleRepository roleRepository;
+
+    @Mock
+    private ApplicationArguments applicationArguments;
+
+    @InjectMocks
+    private AdminBootstrapInitializer initializer;
+
+    @BeforeEach
+    void setupDefaults() {
+        ReflectionTestUtils.setField(initializer, "adminUsername", "admin");
+        ReflectionTestUtils.setField(initializer, "adminPassword", "change_me_admin_password");
+    }
+
+    @Test
+    void createsAllEntitiesWhenDatabaseIsEmpty() throws Exception {
+        when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
+                .thenReturn(Optional.empty());
+        when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
+                .thenReturn(Optional.empty());
+        when(userRepository.findByUsernameIgnoreCase("admin"))
+                .thenReturn(Optional.empty());
+
+        when(roleRepository.save(any(RoleEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(groupRepository.save(any(GroupEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        initializer.run(applicationArguments);
+
+        verify(roleRepository).save(argThat(r -> AdminBootstrapInitializer.DEFAULT_ROLE_NAME.equals(r.getName())));
+        // group save is invoked three times: once on creation, once to add role link, once to add user link
+        verify(groupRepository, times(3)).save(argThat(g -> AdminBootstrapInitializer.DEFAULT_GROUP_NAME.equals(g.getName())));
+        verify(userRepository).save(argThat(u -> "admin".equals(u.getUsername())
+                && "Admin".equals(u.getFirstName())
+                && "User".equals(u.getLastName())
+                && "[]".equals(u.getAttributes())
+                && !u.isEmailVerified()
+                && u.isEnabled()));
+    }
+
+    @Test
+    void doesNotCreateEntitiesWhenAlreadyPresent() throws Exception {
+        RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
+        GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
+        UserEntity existingUser = userWithUsername("admin");
+
+        existingGroup.getRoles().add(existingRole);
+        existingGroup.getUsers().add(existingUser);
+
+        when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
+                .thenReturn(Optional.of(existingRole));
+        when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
+                .thenReturn(Optional.of(existingGroup));
+        when(userRepository.findByUsernameIgnoreCase("admin"))
+                .thenReturn(Optional.of(existingUser));
+
+        initializer.run(applicationArguments);
+
+        verify(roleRepository, never()).save(any());
+        verify(groupRepository, never()).save(any());
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void reconcilesMissingGroupRoleLinkWhenEntitiesExist() throws Exception {
+        RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
+        GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
+        UserEntity existingUser = userWithUsername("admin");
+
+        // Group exists but role link is missing; user link is present
+        existingGroup.getUsers().add(existingUser);
+
+        when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
+                .thenReturn(Optional.of(existingRole));
+        when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
+                .thenReturn(Optional.of(existingGroup));
+        when(userRepository.findByUsernameIgnoreCase("admin"))
+                .thenReturn(Optional.of(existingUser));
+
+        when(groupRepository.save(any(GroupEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        initializer.run(applicationArguments);
+
+        verify(groupRepository).save(argThat(g -> g.getRoles().contains(existingRole)));
+        assertTrue(existingRole.getGroups().contains(existingGroup));
+    }
+
+    @Test
+    void reconcilesMissingUserGroupLinkWhenEntitiesExist() throws Exception {
+        RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
+        GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
+        UserEntity existingUser = userWithUsername("admin");
+
+        // Role link present but user link is missing
+        existingGroup.getRoles().add(existingRole);
+
+        when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
+                .thenReturn(Optional.of(existingRole));
+        when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
+                .thenReturn(Optional.of(existingGroup));
+        when(userRepository.findByUsernameIgnoreCase("admin"))
+                .thenReturn(Optional.of(existingUser));
+
+        when(groupRepository.save(any(GroupEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        initializer.run(applicationArguments);
+
+        verify(groupRepository).save(argThat(g -> g.getUsers().contains(existingUser)));
+        assertTrue(existingUser.getGroups().contains(existingGroup));
+    }
+
+    @Test
+    void fallsBackToDefaultUsernameWhenBlankProvided() throws Exception {
+        ReflectionTestUtils.setField(initializer, "adminUsername", "  ");
+
+        RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
+        GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
+        UserEntity existingUser = userWithUsername(AdminBootstrapInitializer.DEFAULT_USERNAME);
+        existingGroup.getUsers().add(existingUser);
+        existingGroup.getRoles().add(existingRole);
+
+        when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
+                .thenReturn(Optional.of(existingRole));
+        when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
+                .thenReturn(Optional.of(existingGroup));
+        when(userRepository.findByUsernameIgnoreCase(AdminBootstrapInitializer.DEFAULT_USERNAME))
+                .thenReturn(Optional.of(existingUser));
+
+        initializer.run(applicationArguments);
+
+        verify(userRepository, never()).save(any());
+    }
+
+    private RoleEntity roleWithName(String name) {
+        RoleEntity role = new RoleEntity();
+        role.setId(java.util.UUID.randomUUID());
+        role.setName(name);
+        role.setCreatedTimestamp(System.currentTimeMillis());
+        role.setLastModifiedTimestamp(System.currentTimeMillis());
+        return role;
+    }
+
+    private GroupEntity groupWithName(String name) {
+        GroupEntity group = new GroupEntity();
+        group.setId(java.util.UUID.randomUUID());
+        group.setName(name);
+        group.setCreatedTimestamp(System.currentTimeMillis());
+        group.setLastModifiedTimestamp(System.currentTimeMillis());
+        return group;
+    }
+
+    private UserEntity userWithUsername(String username) {
+        UserEntity user = new UserEntity();
+        user.setId(java.util.UUID.randomUUID());
+        user.setUsername(username);
+        user.setFirstName("Admin");
+        user.setLastName("User");
+        user.setEmail("admin@localhost");
+        user.setAttributes("[]");
+        user.setEnabled(true);
+        user.setEmailVerified(false);
+        user.setCreatedTimestamp(System.currentTimeMillis());
+        user.setLastModifiedTimestamp(System.currentTimeMillis());
+        return user;
+    }
+}
