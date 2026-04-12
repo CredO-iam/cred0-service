@@ -1,6 +1,7 @@
 package io.cred0.core.users.service;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,6 +57,11 @@ public class JpaUserService implements UserService {
     public void deleteById(UUID id) {
         UserEntity existing = this.repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + id));
+
+        existing.getGroups().forEach(group -> group.getUsers().remove(existing));
+        existing.getRoles().forEach(role -> role.getUsers().remove(existing));
+        existing.setGroups(new HashSet<>());
+        existing.setRoles(new HashSet<>());
         this.repository.delete(existing);
     }
 

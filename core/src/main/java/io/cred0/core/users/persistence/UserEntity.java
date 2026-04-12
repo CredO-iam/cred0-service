@@ -1,11 +1,16 @@
 package io.cred0.core.users.persistence;
 
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
+import io.cred0.core.groups.persistence.GroupEntity;
+import io.cred0.core.roles.persistence.RoleEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
@@ -61,4 +66,10 @@ public class UserEntity {
     @Lob
     @Column(name = "credentials_value")
     private String credentialsValue;
+
+    @ManyToMany(mappedBy = "users")
+    private Set<GroupEntity> groups = new HashSet<>();
+
+    @ManyToMany(mappedBy = "users")
+    private Set<RoleEntity> roles = new HashSet<>();
 }
