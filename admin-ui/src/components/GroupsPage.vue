@@ -108,8 +108,8 @@ const loadGroups = async () => {
 const buildPayload = () => ({
   name: form.value.name.trim(),
   description: form.value.description.trim() || null,
-  userIds: isEditing.value ? parseCsv(form.value.userIds) : [],
-  roleIds: isEditing.value ? parseCsv(form.value.roleIds) : [],
+  userIds: [],
+  roleIds: [],
 })
 
 const saveGroup = async () => {
