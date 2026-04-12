@@ -19,7 +19,7 @@ class RoleEntityMapperTest {
     void fromCreateRequestMapsCommonFields() {
         RoleRequestDto request = new RoleRequestDto("  manager  ", "  managers  ", null, null);
 
-        RoleEntity entity = RoleEntityMapper.fromCreateRequest(request);
+        RoleEntity entity = RoleEntityMapper.fromRequest(request);
 
         assertEquals("manager", entity.getName());
         assertEquals("managers", entity.getDescription());

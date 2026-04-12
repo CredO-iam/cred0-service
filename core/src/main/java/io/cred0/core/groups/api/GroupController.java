@@ -39,7 +39,7 @@ public class GroupController {
     public GroupResponseDto create(@RequestBody GroupRequestDto request) {
         GroupRequestValidator.validateForCreate(request);
         return GroupEntityMapper.toResponseDto(this.groupService.create(
-                GroupEntityMapper.fromCreateRequest(request),
+                GroupEntityMapper.fromRequest(request),
                 GroupEntityMapper.toIdSet(request.userIds()),
                 GroupEntityMapper.toIdSet(request.roleIds())
         ));
@@ -49,9 +49,9 @@ public class GroupController {
     public GroupResponseDto update(@PathVariable String id, @RequestBody GroupRequestDto request) {
         UUID groupId = GroupRequestValidator.parseUuid(id);
         GroupRequestValidator.validateForUpdate(request);
-        return GroupEntityMapper.toResponseDto(this.groupService.update(
+        return GroupEntityMapper.toResponseDtoWithRelations(this.groupService.update(
                 groupId,
-                GroupEntityMapper.fromUpdateRequest(request),
+                GroupEntityMapper.fromRequest(request),
                 GroupEntityMapper.toIdSet(request.userIds()),
                 GroupEntityMapper.toIdSet(request.roleIds())
         ));

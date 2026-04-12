@@ -8,6 +8,8 @@ import java.util.UUID;
 import io.cred0.core.groups.api.GroupRequestDto;
 import io.cred0.core.groups.api.GroupResponseDto;
 import io.cred0.core.groups.persistence.GroupEntity;
+import io.cred0.core.roles.persistence.RoleEntity;
+import io.cred0.core.users.persistence.UserEntity;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
@@ -16,18 +18,11 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class GroupEntityMapper {
 
-    public static GroupEntity fromCreateRequest(GroupRequestDto request) {
+    public static GroupEntity fromRequest(GroupRequestDto request) {
         GroupEntity entity = new GroupEntity();
         mapCommonFields(request, entity);
         return entity;
     }
-
-    public static GroupEntity fromUpdateRequest(GroupRequestDto request) {
-        GroupEntity entity = new GroupEntity();
-        mapCommonFields(request, entity);
-        return entity;
-    }
-
     public static GroupResponseDto toResponseDto(GroupEntity entity) {
         return new GroupResponseDto(
                 entity.getId(),
@@ -35,8 +30,20 @@ public final class GroupEntityMapper {
                 entity.getDescription(),
                 entity.getCreatedTimestamp(),
                 entity.getLastModifiedTimestamp(),
-                entity.getUsers().stream().map(user -> user.getId()).sorted().toList(),
-                entity.getRoles().stream().map(role -> role.getId()).sorted().toList()
+                List.of(),
+                List.of()
+        );
+    }
+
+    public static GroupResponseDto toResponseDtoWithRelations(GroupEntity entity) {
+        return new GroupResponseDto(
+                entity.getId(),
+                entity.getName(),
+                entity.getDescription(),
+                entity.getCreatedTimestamp(),
+                entity.getLastModifiedTimestamp(),
+                entity.getUsers().stream().map(UserEntity::getId).sorted().toList(),
+                entity.getRoles().stream().map(RoleEntity::getId).sorted().toList()
         );
     }
 

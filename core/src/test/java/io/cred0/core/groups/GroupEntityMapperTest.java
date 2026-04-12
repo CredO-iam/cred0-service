@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GroupEntityMapperTest {
 
     @Test
-    void fromCreateRequestMapsCommonFields() {
+    void fromRequestMapsCommonFields() {
         GroupRequestDto request = new GroupRequestDto("  admins  ", "  internal admins  ", null, null);
 
-        GroupEntity entity = GroupEntityMapper.fromCreateRequest(request);
+        GroupEntity entity = GroupEntityMapper.fromRequest(request);
 
         assertEquals("admins", entity.getName());
         assertEquals("internal admins", entity.getDescription());

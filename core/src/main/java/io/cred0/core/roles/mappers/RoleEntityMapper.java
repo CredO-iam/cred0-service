@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import io.cred0.core.groups.persistence.GroupEntity;
 import io.cred0.core.roles.api.RoleRequestDto;
 import io.cred0.core.roles.api.RoleResponseDto;
 import io.cred0.core.roles.persistence.RoleEntity;
+import io.cred0.core.users.persistence.UserEntity;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
@@ -16,13 +18,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class RoleEntityMapper {
 
-    public static RoleEntity fromCreateRequest(RoleRequestDto request) {
-        RoleEntity entity = new RoleEntity();
-        mapCommonFields(request, entity);
-        return entity;
-    }
-
-    public static RoleEntity fromUpdateRequest(RoleRequestDto request) {
+    public static RoleEntity fromRequest(RoleRequestDto request) {
         RoleEntity entity = new RoleEntity();
         mapCommonFields(request, entity);
         return entity;
@@ -35,8 +31,20 @@ public final class RoleEntityMapper {
                 entity.getDescription(),
                 entity.getCreatedTimestamp(),
                 entity.getLastModifiedTimestamp(),
-                entity.getUsers().stream().map(user -> user.getId()).sorted().toList(),
-                entity.getGroups().stream().map(group -> group.getId()).sorted().toList()
+                List.of(),
+                List.of()
+        );
+    }
+
+    public static RoleResponseDto toResponseDtoWithRelations(RoleEntity entity) {
+        return new RoleResponseDto(
+                entity.getId(),
+                entity.getName(),
+                entity.getDescription(),
+                entity.getCreatedTimestamp(),
+                entity.getLastModifiedTimestamp(),
+                entity.getUsers().stream().map(UserEntity::getId).sorted().toList(),
+                entity.getGroups().stream().map(GroupEntity::getId).sorted().toList()
         );
     }
 

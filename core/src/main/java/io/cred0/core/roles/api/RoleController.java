@@ -39,7 +39,7 @@ public class RoleController {
     public RoleResponseDto create(@RequestBody RoleRequestDto request) {
         RoleRequestValidator.validateForCreate(request);
         return RoleEntityMapper.toResponseDto(this.roleService.create(
-                RoleEntityMapper.fromCreateRequest(request),
+                RoleEntityMapper.fromRequest(request),
                 RoleEntityMapper.toIdSet(request.userIds()),
                 RoleEntityMapper.toIdSet(request.groupIds())
         ));
@@ -49,9 +49,9 @@ public class RoleController {
     public RoleResponseDto update(@PathVariable String id, @RequestBody RoleRequestDto request) {
         UUID roleId = RoleRequestValidator.parseUuid(id);
         RoleRequestValidator.validateForUpdate(request);
-        return RoleEntityMapper.toResponseDto(this.roleService.update(
+        return RoleEntityMapper.toResponseDtoWithRelations(this.roleService.update(
                 roleId,
-                RoleEntityMapper.fromUpdateRequest(request),
+                RoleEntityMapper.fromRequest(request),
                 RoleEntityMapper.toIdSet(request.userIds()),
                 RoleEntityMapper.toIdSet(request.groupIds())
         ));
