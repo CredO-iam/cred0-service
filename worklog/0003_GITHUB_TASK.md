@@ -21,14 +21,14 @@ Initialize core authorization entities automatically on backend startup:
 2. ensure group `admins` exists,
 3. ensure role `system_admin` exists,
 4. ensure relations `admin -> admins` and `admins -> system_admin` exist,
-5. source admin login/password from env with default fallback values.
+5. source admin login/password from env with default fallback values via `@Value`.
 
 ---
 
 ## Scope
 ### In Scope
 - Backend-only bootstrap implementation in `core/`.
-- Runtime configuration for env-based admin credentials and defaults.
+- Runtime configuration for env-based admin `username/password` only.
 - Idempotent startup behavior and relation reconciliation.
 - Unit tests for bootstrap logic.
 
@@ -38,6 +38,7 @@ Initialize core authorization entities automatically on backend startup:
 - Password hashing redesign.
 - Additional roles/groups beyond requested defaults.
 - Dependency changes.
+- Introducing `AdminBootstrapProperties` (`@ConfigurationProperties`) now; it will be added later together with other bootstrap variables.
 
 ---
 
@@ -47,11 +48,12 @@ Initialize core authorization entities automatically on backend startup:
 1. Add bootstrap configuration keys in `core/src/main/resources/application.yaml`:
    - `cred0.bootstrap.admin.username` <- `${CRED0_BOOTSTRAP_ADMIN_USERNAME:admin}`
    - `cred0.bootstrap.admin.password` <- `${CRED0_BOOTSTRAP_ADMIN_PASSWORD:change_me_admin_password}`
-   - optional defaults for credential type/email/enabled.
+   - no additional bootstrap keys are required in this task.
 
-2. Add properties holder:
-   - `core/src/main/java/io/cred0/core/bootstrap/AdminBootstrapProperties.java`
-   - `@ConfigurationProperties(prefix = "cred0.bootstrap.admin")`.
+2. In startup initializer, bind only admin login/password through `@Value`:
+   - `@Value("${cred0.bootstrap.admin.username:admin}")`
+   - `@Value("${cred0.bootstrap.admin.password:change_me_admin_password}")`
+   - do not add `AdminBootstrapProperties` in this task.
 
 3. Add startup initializer:
    - `core/src/main/java/io/cred0/core/bootstrap/AdminBootstrapInitializer.java`
@@ -65,12 +67,13 @@ Initialize core authorization entities automatically on backend startup:
 
 5. Entity defaults for bootstrap user:
    - username from env/default,
-   - credentials type/value from config,
+   - credentials value from env/default password,
+   - credentials type uses current backend default (no new config key in this task),
    - `firstName = "Admin"`, `lastName = "User"`,
    - `attributes = "[]"`,
-   - `enabled` from config (default true),
+   - `enabled = true`,
    - `emailVerified = false`,
-   - `email` from config default.
+   - `email` uses current backend default/static value.
 
 6. Relation consistency:
    - user must be linked to group,
@@ -83,9 +86,10 @@ Initialize core authorization entities automatically on backend startup:
 - Startup creates missing `admin`, `admins`, `system_admin` when absent.
 - Startup keeps behavior idempotent across restarts.
 - Required links exist after startup.
-- Admin username/password are read from env vars with configured fallback defaults.
+- Admin username/password are read via `@Value` from env-backed properties with fallback defaults.
 - No passwords/tokens are logged.
 - No new dependencies.
+- `AdminBootstrapProperties` is not introduced in this task.
 - Unit tests for new bootstrap logic are present and passing.
 
 ---
