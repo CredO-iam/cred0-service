@@ -80,37 +80,39 @@ const updateField = (field, value) => {
         />
       </label>
 
-      <label class="block">
-        <span class="mb-1 block text-sm font-medium">User IDs (comma separated UUIDs)</span>
-        <input
-          :value="props.modelValue.userIds"
-          type="text"
-          placeholder="11111111-1111-1111-1111-111111111111"
-          class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:ring-2"
-          :class="
-            props.isDarkTheme
-              ? 'border-slate-700 bg-slate-800 text-slate-100 focus:ring-blue-500/40'
-              : 'border-slate-300 bg-white text-slate-900 focus:ring-blue-400/40'
-          "
-          @input="updateField('userIds', $event.target.value)"
-        >
-      </label>
+      <template v-if="props.isEditing">
+        <label class="block">
+          <span class="mb-1 block text-sm font-medium">User IDs (comma separated UUIDs)</span>
+          <input
+            :value="props.modelValue.userIds"
+            type="text"
+            placeholder="11111111-1111-1111-1111-111111111111"
+            class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:ring-2"
+            :class="
+              props.isDarkTheme
+                ? 'border-slate-700 bg-slate-800 text-slate-100 focus:ring-blue-500/40'
+                : 'border-slate-300 bg-white text-slate-900 focus:ring-blue-400/40'
+            "
+            @input="updateField('userIds', $event.target.value)"
+          >
+        </label>
 
-      <label class="block">
-        <span class="mb-1 block text-sm font-medium">Group IDs (comma separated UUIDs)</span>
-        <input
-          :value="props.modelValue.groupIds"
-          type="text"
-          placeholder="22222222-2222-2222-2222-222222222222"
-          class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:ring-2"
-          :class="
-            props.isDarkTheme
-              ? 'border-slate-700 bg-slate-800 text-slate-100 focus:ring-blue-500/40'
-              : 'border-slate-300 bg-white text-slate-900 focus:ring-blue-400/40'
-          "
-          @input="updateField('groupIds', $event.target.value)"
-        >
-      </label>
+        <label class="block">
+          <span class="mb-1 block text-sm font-medium">Group IDs (comma separated UUIDs)</span>
+          <input
+            :value="props.modelValue.groupIds"
+            type="text"
+            placeholder="22222222-2222-2222-2222-222222222222"
+            class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:ring-2"
+            :class="
+              props.isDarkTheme
+                ? 'border-slate-700 bg-slate-800 text-slate-100 focus:ring-blue-500/40'
+                : 'border-slate-300 bg-white text-slate-900 focus:ring-blue-400/40'
+            "
+            @input="updateField('groupIds', $event.target.value)"
+          >
+        </label>
+      </template>
 
       <div class="flex gap-2">
         <button

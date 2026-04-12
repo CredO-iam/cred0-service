@@ -108,8 +108,8 @@ const loadRoles = async () => {
 const buildPayload = () => ({
   name: form.value.name.trim(),
   description: form.value.description.trim() || null,
-  userIds: parseCsv(form.value.userIds),
-  groupIds: parseCsv(form.value.groupIds),
+  userIds: isEditing.value ? parseCsv(form.value.userIds) : [],
+  groupIds: isEditing.value ? parseCsv(form.value.groupIds) : [],
 })
 
 const saveRole = async () => {
