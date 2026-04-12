@@ -19,3 +19,12 @@ spring:
   sql:
     init:
       mode: never
+
+cred0:
+  bootstrap:
+    admin:
+      username: ${CRED0_BOOTSTRAP_ADMIN_USERNAME:admin}
+      password: ${CRED0_BOOTSTRAP_ADMIN_PASSWORD:change_me_admin_password}
+      email: ${CRED0_BOOTSTRAP_ADMIN_EMAIL:admin@localhost}
+      credentials-type: ${CRED0_BOOTSTRAP_ADMIN_CREDENTIALS_TYPE:password}
+      enabled: ${CRED0_BOOTSTRAP_ADMIN_ENABLED:true}
