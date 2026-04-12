@@ -73,6 +73,7 @@ class AdminBootstrapInitializerTest {
         initializer.run(applicationArguments);
 
         verify(roleRepository).save(argThat(r -> AdminBootstrapInitializer.DEFAULT_ROLE_NAME.equals(r.getName())));
+        // group save is invoked three times: once on creation, once to add role link, once to add user link
         verify(groupRepository, times(3)).save(argThat(g -> AdminBootstrapInitializer.DEFAULT_GROUP_NAME.equals(g.getName())));
         verify(userRepository).save(argThat(u -> "admin".equals(u.getUsername())
                 && "Admin".equals(u.getFirstName())
@@ -157,21 +158,17 @@ class AdminBootstrapInitializerTest {
     void fallsBackToDefaultUsernameWhenBlankProvided() throws Exception {
         when(properties.getUsername()).thenReturn("  ");
 
-        when(roleRepository.findByNameIgnoreCase(any())).thenReturn(Optional.of(roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME)));
-        when(groupRepository.findByNameIgnoreCase(any())).thenAnswer(inv -> {
-            GroupEntity g = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
-            return Optional.of(g);
-        });
-        when(userRepository.findByUsernameIgnoreCase("admin")).thenReturn(Optional.of(userWithUsername("admin")));
+        RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
+        GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
+        UserEntity existingUser = userWithUsername("admin");
+        existingGroup.getUsers().add(existingUser);
+        existingGroup.getRoles().add(existingRole);
 
-        GroupEntity capturedGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
+        when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
+                .thenReturn(Optional.of(existingRole));
         when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
-                .thenReturn(Optional.of(capturedGroup));
-
-        UserEntity capturedUser = userWithUsername("admin");
-        capturedGroup.getUsers().add(capturedUser);
-        capturedGroup.getRoles().add(roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME));
-        when(userRepository.findByUsernameIgnoreCase("admin")).thenReturn(Optional.of(capturedUser));
+                .thenReturn(Optional.of(existingGroup));
+        when(userRepository.findByUsernameIgnoreCase("admin")).thenReturn(Optional.of(existingUser));
 
         initializer.run(applicationArguments);
 
