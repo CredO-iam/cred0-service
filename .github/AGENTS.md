@@ -22,6 +22,7 @@ The repository has two product layers and changes should be made in the relevant
 - Do not introduce breaking changes unless requested.
 - All comments must be in English.
 - No non-English text inside code.
+- Keep the root `README.md` up to date when changes affect project capabilities, architecture, repository structure, setup, or operational behavior.
 - If requirements are ambiguous, explicitly state assumptions before implementation.
 
 ## Cross-Cutting Implementation Rules
