@@ -14,9 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,11 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class AdminBootstrapInitializerTest {
-
-    @Mock
-    private AdminBootstrapProperties properties;
 
     @Mock
     private JpaUserEntityRepository userRepository;
@@ -50,11 +45,8 @@ class AdminBootstrapInitializerTest {
 
     @BeforeEach
     void setupDefaults() {
-        when(properties.getUsername()).thenReturn("admin");
-        when(properties.getPassword()).thenReturn("change_me_admin_password");
-        when(properties.getEmail()).thenReturn("admin@localhost");
-        when(properties.getCredentialsType()).thenReturn("password");
-        when(properties.isEnabled()).thenReturn(true);
+        ReflectionTestUtils.setField(initializer, "adminUsername", "admin");
+        ReflectionTestUtils.setField(initializer, "adminPassword", "change_me_admin_password");
     }
 
     @Test
@@ -156,11 +148,11 @@ class AdminBootstrapInitializerTest {
 
     @Test
     void fallsBackToDefaultUsernameWhenBlankProvided() throws Exception {
-        when(properties.getUsername()).thenReturn("  ");
+        ReflectionTestUtils.setField(initializer, "adminUsername", "  ");
 
         RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
         GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
-        UserEntity existingUser = userWithUsername("admin");
+        UserEntity existingUser = userWithUsername(AdminBootstrapInitializer.DEFAULT_USERNAME);
         existingGroup.getUsers().add(existingUser);
         existingGroup.getRoles().add(existingRole);
 
@@ -168,7 +160,8 @@ class AdminBootstrapInitializerTest {
                 .thenReturn(Optional.of(existingRole));
         when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
                 .thenReturn(Optional.of(existingGroup));
-        when(userRepository.findByUsernameIgnoreCase("admin")).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByUsernameIgnoreCase(AdminBootstrapInitializer.DEFAULT_USERNAME))
+                .thenReturn(Optional.of(existingUser));
 
         initializer.run(applicationArguments);
 
