@@ -51,7 +51,7 @@ class UserControllerTest {
         UserEntity user = userEntity();
         when(userService.findAll()).thenReturn(List.of(user));
 
-        mockMvc.perform(get("/api/users"))
+        mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.users[0].id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.users[0].credentials.secretSet").value(true));
@@ -59,7 +59,7 @@ class UserControllerTest {
 
     @Test
     void malformedUuidReturnsBadRequest() throws Exception {
-        mockMvc.perform(get("/api/users/not-a-uuid"))
+        mockMvc.perform(get("/admin/users/not-a-uuid"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("id must be a valid UUID"));
@@ -67,7 +67,7 @@ class UserControllerTest {
 
     @Test
     void validationFailureReturnsBadRequest() throws Exception {
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/admin/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"invalid\"}"))
                 .andExpect(status().isBadRequest())
@@ -79,7 +79,7 @@ class UserControllerTest {
         UserEntity user = userEntity();
         when(userService.create(any(UserEntity.class))).thenReturn(user);
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/admin/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validCreateBody()))
                 .andExpect(status().isCreated())
@@ -93,7 +93,7 @@ class UserControllerTest {
         when(userService.update(eq(id), any(UserEntity.class)))
                 .thenThrow(new UserNotFoundException("User not found: " + id));
 
-        mockMvc.perform(put("/api/users/{id}", id)
+        mockMvc.perform(put("/admin/users/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validUpdateBody()))
                 .andExpect(status().isNotFound())
@@ -105,7 +105,7 @@ class UserControllerTest {
         doThrow(new UserConflictException("username or email already exists", null))
                 .when(userService).create(any(UserEntity.class));
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post("/admin/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validCreateBody()))
                 .andExpect(status().isConflict())
@@ -118,7 +118,7 @@ class UserControllerTest {
         UUID id = UUID.randomUUID();
         doNothing().when(userService).deleteById(id);
 
-        mockMvc.perform(delete("/api/users/{id}", id))
+        mockMvc.perform(delete("/admin/users/{id}", id))
                 .andExpect(status().isNoContent());
     }
 

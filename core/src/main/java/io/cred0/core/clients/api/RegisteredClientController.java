@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api/registered-clients")
+@RequestMapping("/admin/registered-clients")
 @RequiredArgsConstructor
 public class RegisteredClientController {
 

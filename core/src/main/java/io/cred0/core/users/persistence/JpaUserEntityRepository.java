@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface JpaUserEntityRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByUsernameIgnoreCase(String username);
+
+    Optional<UserEntity> findOneByUsernameIgnoreCase(String username);
 }

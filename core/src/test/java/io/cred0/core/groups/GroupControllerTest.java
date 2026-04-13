@@ -51,14 +51,14 @@ class GroupControllerTest {
         GroupEntity group = groupEntity();
         when(groupService.findAll()).thenReturn(List.of(group));
 
-        mockMvc.perform(get("/api/groups"))
+        mockMvc.perform(get("/admin/groups"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.groups[0].id").value(group.getId().toString()));
     }
 
     @Test
     void malformedUuidReturnsBadRequest() throws Exception {
-        mockMvc.perform(get("/api/groups/not-a-uuid"))
+        mockMvc.perform(get("/admin/groups/not-a-uuid"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("id must be a valid UUID"));
@@ -66,7 +66,7 @@ class GroupControllerTest {
 
     @Test
     void validationFailureReturnsBadRequest() throws Exception {
-        mockMvc.perform(post("/api/groups")
+        mockMvc.perform(post("/admin/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\"}"))
                 .andExpect(status().isBadRequest())
@@ -78,7 +78,7 @@ class GroupControllerTest {
         GroupEntity group = groupEntity();
         when(groupService.create(any(GroupEntity.class), any(), any())).thenReturn(group);
 
-        mockMvc.perform(post("/api/groups")
+        mockMvc.perform(post("/admin/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isCreated())
@@ -91,7 +91,7 @@ class GroupControllerTest {
         when(groupService.update(eq(id), any(GroupEntity.class), any(), any()))
                 .thenThrow(new GroupNotFoundException("Group not found: " + id));
 
-        mockMvc.perform(put("/api/groups/{id}", id)
+        mockMvc.perform(put("/admin/groups/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isNotFound())
@@ -103,7 +103,7 @@ class GroupControllerTest {
         doThrow(new GroupConflictException("group name already exists", null))
                 .when(groupService).create(any(GroupEntity.class), any(), any());
 
-        mockMvc.perform(post("/api/groups")
+        mockMvc.perform(post("/admin/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isConflict())
@@ -115,7 +115,7 @@ class GroupControllerTest {
         UUID id = UUID.randomUUID();
         doNothing().when(groupService).deleteById(id);
 
-        mockMvc.perform(delete("/api/groups/{id}", id))
+        mockMvc.perform(delete("/admin/groups/{id}", id))
                 .andExpect(status().isNoContent());
     }
 

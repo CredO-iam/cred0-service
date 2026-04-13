@@ -24,4 +24,4 @@ cred0:
   bootstrap:
     admin:
       username: ${CRED0_BOOTSTRAP_ADMIN_USERNAME:admin}
-      password: ${CRED0_BOOTSTRAP_ADMIN_PASSWORD:change_me_admin_password}
+      password: ${CRED0_BOOTSTRAP_ADMIN_PASSWORD:admin_password}

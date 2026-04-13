@@ -51,14 +51,14 @@ class RoleControllerTest {
         RoleEntity role = roleEntity();
         when(roleService.findAll()).thenReturn(List.of(role));
 
-        mockMvc.perform(get("/api/roles"))
+        mockMvc.perform(get("/admin/roles"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.roles[0].id").value(role.getId().toString()));
     }
 
     @Test
     void malformedUuidReturnsBadRequest() throws Exception {
-        mockMvc.perform(get("/api/roles/not-a-uuid"))
+        mockMvc.perform(get("/admin/roles/not-a-uuid"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("id must be a valid UUID"));
@@ -66,7 +66,7 @@ class RoleControllerTest {
 
     @Test
     void validationFailureReturnsBadRequest() throws Exception {
-        mockMvc.perform(post("/api/roles")
+        mockMvc.perform(post("/admin/roles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\"}"))
                 .andExpect(status().isBadRequest())
@@ -78,7 +78,7 @@ class RoleControllerTest {
         RoleEntity role = roleEntity();
         when(roleService.create(any(RoleEntity.class), any(), any())).thenReturn(role);
 
-        mockMvc.perform(post("/api/roles")
+        mockMvc.perform(post("/admin/roles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isCreated())
@@ -91,7 +91,7 @@ class RoleControllerTest {
         when(roleService.update(eq(id), any(RoleEntity.class), any(), any()))
                 .thenThrow(new RoleNotFoundException("Role not found: " + id));
 
-        mockMvc.perform(put("/api/roles/{id}", id)
+        mockMvc.perform(put("/admin/roles/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isNotFound())
@@ -103,7 +103,7 @@ class RoleControllerTest {
         doThrow(new RoleConflictException("role name already exists", null))
                 .when(roleService).create(any(RoleEntity.class), any(), any());
 
-        mockMvc.perform(post("/api/roles")
+        mockMvc.perform(post("/admin/roles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody()))
                 .andExpect(status().isConflict())
@@ -115,7 +115,7 @@ class RoleControllerTest {
         UUID id = UUID.randomUUID();
         doNothing().when(roleService).deleteById(id);
 
-        mockMvc.perform(delete("/api/roles/{id}", id))
+        mockMvc.perform(delete("/admin/roles/{id}", id))
                 .andExpect(status().isNoContent());
     }
 

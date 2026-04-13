@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class AdminBootstrapInitializer implements ApplicationRunner {
     private final JpaUserEntityRepository userRepository;
     private final JpaGroupRepository groupRepository;
     private final JpaRoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${cred0.bootstrap.admin.username:admin}")
     private String adminUsername;
@@ -38,10 +40,12 @@ public class AdminBootstrapInitializer implements ApplicationRunner {
 
     public AdminBootstrapInitializer(JpaUserEntityRepository userRepository,
                                      JpaGroupRepository groupRepository,
-                                     JpaRoleRepository roleRepository) {
+                                     JpaRoleRepository roleRepository,
+                                     PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -96,21 +100,21 @@ public class AdminBootstrapInitializer implements ApplicationRunner {
     private UserEntity ensureUser(String username) {
         return userRepository.findByUsernameIgnoreCase(username).orElseGet(() -> {
             log.info("Bootstrap: creating user '{}'", username);
-            UserEntity user = new UserEntity();
-            user.setId(UUID.randomUUID());
-            user.setUsername(username);
-            user.setFirstName("Admin");
-            user.setLastName("User");
-            user.setEmail("admin@localhost");
-            user.setEnabled(true);
-            user.setEmailVerified(false);
-            user.setAttributes("[]");
-            user.setCredentialsType("password");
-            user.setCredentialsValue(adminPassword);
+            UserEntity newUser = new UserEntity();
+            newUser.setId(UUID.randomUUID());
+            newUser.setUsername(username);
+            newUser.setFirstName("Admin");
+            newUser.setLastName("User");
+            newUser.setEmail("admin@localhost");
+            newUser.setEnabled(true);
+            newUser.setEmailVerified(false);
+            newUser.setAttributes("[]");
+            newUser.setCredentialsType("password");
+            newUser.setCredentialsValue(passwordEncoder.encode(adminPassword));
             long now = Instant.now().toEpochMilli();
-            user.setCreatedTimestamp(now);
-            user.setLastModifiedTimestamp(now);
-            return userRepository.save(user);
+            newUser.setCreatedTimestamp(now);
+            newUser.setLastModifiedTimestamp(now);
+            return userRepository.save(newUser);
         });
     }
 

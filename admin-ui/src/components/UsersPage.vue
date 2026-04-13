@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { getSurfaceThemeClass } from '@/shared/uiClasses'
 import { DEFAULT_USER_CREDENTIAL_TYPE, USER_CREDENTIAL_TYPES } from '@/shared/userCredentialTypes'
+import { fetchAdmin } from '@/shared/adminApi'
 import UserRow from '@/components/users/UserRow.vue'
 import UserForm from '@/components/users/UserForm.vue'
 
@@ -12,8 +13,6 @@ const props = defineProps({
   },
 })
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const USERS_API_URL = `${API_BASE_URL}/api/users`
 const users = ref([])
 const isLoading = ref(false)
 const isSaving = ref(false)
@@ -91,7 +90,7 @@ const loadUsers = async () => {
   clearMessages()
   isLoading.value = true
   try {
-    const response = await fetch(USERS_API_URL)
+    const response = await fetchAdmin('/users')
     if (!response.ok) {
       errorMessage.value = await toErrorMessage(response)
       return
@@ -181,11 +180,10 @@ const saveUser = async () => {
   isSaving.value = true
   const payload = buildPayload()
   const isUpdate = Boolean(form.value.id)
-  const targetUrl = isUpdate ? `${USERS_API_URL}/${form.value.id}` : USERS_API_URL
   const method = isUpdate ? 'PUT' : 'POST'
 
   try {
-    const response = await fetch(targetUrl, {
+    const response = await fetchAdmin(isUpdate ? `/users/${form.value.id}` : '/users', {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -240,7 +238,7 @@ const deleteUser = async (user) => {
   clearMessages()
   deletingUserId.value = user.id
   try {
-    const response = await fetch(`${USERS_API_URL}/${user.id}`, {
+    const response = await fetchAdmin(`/users/${user.id}`, {
       method: 'DELETE',
     })
     if (!response.ok) {

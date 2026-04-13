@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getSurfaceThemeClass } from '@/shared/uiClasses'
+import { fetchAdmin } from '@/shared/adminApi'
 import GroupRow from '@/components/groups/GroupRow.vue'
 import GroupForm from '@/components/groups/GroupForm.vue'
 
@@ -10,9 +11,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const GROUPS_API_URL = `${API_BASE_URL}/api/groups`
 
 const groups = ref([])
 const isLoading = ref(false)
@@ -91,7 +89,7 @@ const loadGroups = async () => {
   clearMessages()
   isLoading.value = true
   try {
-    const response = await fetch(GROUPS_API_URL)
+    const response = await fetchAdmin('/groups')
     if (!response.ok) {
       errorMessage.value = await toErrorMessage(response)
       return
@@ -117,11 +115,10 @@ const saveGroup = async () => {
   isSaving.value = true
 
   const isUpdate = Boolean(form.value.id)
-  const targetUrl = isUpdate ? `${GROUPS_API_URL}/${form.value.id}` : GROUPS_API_URL
   const method = isUpdate ? 'PUT' : 'POST'
 
   try {
-    const response = await fetch(targetUrl, {
+    const response = await fetchAdmin(isUpdate ? `/groups/${form.value.id}` : '/groups', {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -169,7 +166,7 @@ const deleteGroup = async (group) => {
   clearMessages()
   deletingGroupId.value = group.id
   try {
-    const response = await fetch(`${GROUPS_API_URL}/${group.id}`, {
+    const response = await fetchAdmin(`/groups/${group.id}`, {
       method: 'DELETE',
     })
     if (!response.ok) {

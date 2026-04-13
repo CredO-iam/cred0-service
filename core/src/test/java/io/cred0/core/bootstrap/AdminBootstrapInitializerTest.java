@@ -15,11 +15,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,6 +42,9 @@ class AdminBootstrapInitializerTest {
     @Mock
     private ApplicationArguments applicationArguments;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private AdminBootstrapInitializer initializer;
 
@@ -47,10 +52,12 @@ class AdminBootstrapInitializerTest {
     void setupDefaults() {
         ReflectionTestUtils.setField(initializer, "adminUsername", "admin");
         ReflectionTestUtils.setField(initializer, "adminPassword", "change_me_admin_password");
+        lenient().when(passwordEncoder.encode(any(String.class)))
+                .thenAnswer(inv -> "{bcrypt}encoded-" + inv.getArgument(0));
     }
 
     @Test
-    void createsAllEntitiesWhenDatabaseIsEmpty() throws Exception {
+    void createsAllEntitiesWhenDatabaseIsEmpty() {
         when(roleRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_ROLE_NAME))
                 .thenReturn(Optional.empty());
         when(groupRepository.findByNameIgnoreCase(AdminBootstrapInitializer.DEFAULT_GROUP_NAME))
@@ -72,11 +79,12 @@ class AdminBootstrapInitializerTest {
                 && "User".equals(u.getLastName())
                 && "[]".equals(u.getAttributes())
                 && !u.isEmailVerified()
-                && u.isEnabled()));
+                && u.isEnabled()
+                && u.getCredentialsValue().startsWith("{bcrypt}encoded-change_me_admin_password")));
     }
 
     @Test
-    void doesNotCreateEntitiesWhenAlreadyPresent() throws Exception {
+    void doesNotCreateEntitiesWhenAlreadyPresent() {
         RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
         GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
         UserEntity existingUser = userWithUsername("admin");
@@ -99,7 +107,7 @@ class AdminBootstrapInitializerTest {
     }
 
     @Test
-    void reconcilesMissingGroupRoleLinkWhenEntitiesExist() throws Exception {
+    void reconcilesMissingGroupRoleLinkWhenEntitiesExist() {
         RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
         GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
         UserEntity existingUser = userWithUsername("admin");
@@ -123,7 +131,7 @@ class AdminBootstrapInitializerTest {
     }
 
     @Test
-    void reconcilesMissingUserGroupLinkWhenEntitiesExist() throws Exception {
+    void reconcilesMissingUserGroupLinkWhenEntitiesExist() {
         RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);
         GroupEntity existingGroup = groupWithName(AdminBootstrapInitializer.DEFAULT_GROUP_NAME);
         UserEntity existingUser = userWithUsername("admin");
@@ -147,7 +155,7 @@ class AdminBootstrapInitializerTest {
     }
 
     @Test
-    void fallsBackToDefaultUsernameWhenBlankProvided() throws Exception {
+    void fallsBackToDefaultUsernameWhenBlankProvided() {
         ReflectionTestUtils.setField(initializer, "adminUsername", "  ");
 
         RoleEntity existingRole = roleWithName(AdminBootstrapInitializer.DEFAULT_ROLE_NAME);

@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getSurfaceThemeClass } from '@/shared/uiClasses'
+import { fetchAdmin } from '@/shared/adminApi'
 import RoleRow from '@/components/roles/RoleRow.vue'
 import RoleForm from '@/components/roles/RoleForm.vue'
 
@@ -10,9 +11,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const ROLES_API_URL = `${API_BASE_URL}/api/roles`
 
 const roles = ref([])
 const isLoading = ref(false)
@@ -91,7 +89,7 @@ const loadRoles = async () => {
   clearMessages()
   isLoading.value = true
   try {
-    const response = await fetch(ROLES_API_URL)
+    const response = await fetchAdmin('/roles')
     if (!response.ok) {
       errorMessage.value = await toErrorMessage(response)
       return
@@ -117,11 +115,10 @@ const saveRole = async () => {
   isSaving.value = true
 
   const isUpdate = Boolean(form.value.id)
-  const targetUrl = isUpdate ? `${ROLES_API_URL}/${form.value.id}` : ROLES_API_URL
   const method = isUpdate ? 'PUT' : 'POST'
 
   try {
-    const response = await fetch(targetUrl, {
+    const response = await fetchAdmin(isUpdate ? `/roles/${form.value.id}` : '/roles', {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -169,7 +166,7 @@ const deleteRole = async (role) => {
   clearMessages()
   deletingRoleId.value = role.id
   try {
-    const response = await fetch(`${ROLES_API_URL}/${role.id}`, {
+    const response = await fetchAdmin(`/roles/${role.id}`, {
       method: 'DELETE',
     })
     if (!response.ok) {

@@ -9,14 +9,19 @@ import io.cred0.core.users.persistence.JpaUserEntityRepository;
 import io.cred0.core.users.persistence.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
 public class JpaUserService implements UserService {
 
     private final JpaUserEntityRepository repository;
+    private final PasswordEncoder passwordEncoder;
+
+    public static final String USER_NOT_FOUND = "User not found: ";
 
     @Override
     public List<UserEntity> findAll() {
@@ -26,12 +31,13 @@ public class JpaUserService implements UserService {
     @Override
     public UserEntity findById(UUID id) {
         return this.repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND + id));
     }
 
     @Override
     @Transactional
     public UserEntity create(UserEntity user) {
+        encodePasswordCredentialsIfNeeded(user);
         long now = Instant.now().toEpochMilli();
         user.setId(UUID.randomUUID());
         user.setCreatedTimestamp(now);
@@ -43,8 +49,9 @@ public class JpaUserService implements UserService {
     @Transactional
     public UserEntity update(UUID id, UserEntity user) {
         UserEntity existing = this.repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND + id));
 
+        encodePasswordCredentialsIfNeeded(user);
         user.setId(existing.getId());
         user.setCreatedTimestamp(existing.getCreatedTimestamp());
         user.setLastModifiedTimestamp(Instant.now().toEpochMilli());
@@ -56,7 +63,7 @@ public class JpaUserService implements UserService {
     @Transactional
     public void deleteById(UUID id) {
         UserEntity existing = this.repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND + id));
 
         existing.getGroups().forEach(group -> group.getUsers().remove(existing));
         existing.getRoles().forEach(role -> role.getUsers().remove(existing));
@@ -73,4 +80,19 @@ public class JpaUserService implements UserService {
             throw new UserConflictException("username or email already exists", ex);
         }
     }
+
+    private void encodePasswordCredentialsIfNeeded(UserEntity user) {
+        if (!"password".equalsIgnoreCase(user.getCredentialsType())) {
+            return;
+        }
+
+        if (!StringUtils.hasText(user.getCredentialsValue())) {
+            return;
+        }
+
+        String rawOrEncoded = user.getCredentialsValue().trim();
+
+        user.setCredentialsValue(passwordEncoder.encode(rawOrEncoded));
+    }
+
 }

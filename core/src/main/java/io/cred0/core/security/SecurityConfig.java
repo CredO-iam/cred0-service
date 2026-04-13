@@ -8,10 +8,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+
+    private static final String LOGIN_ENDPOINT = "/login";
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -23,6 +27,28 @@ public class SecurityConfig {
                 .headers(headersCustomizer);
 
         return http.build();
+    }
+
+    @Bean
+    public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) {
+        http
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(LOGIN_ENDPOINT).permitAll()
+                        .requestMatchers("/admin/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form
+                        .loginProcessingUrl(LOGIN_ENDPOINT)
+                        .permitAll()
+                )
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/admin/**", LOGIN_ENDPOINT));
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     private final Customizer<HeadersConfigurer<HttpSecurity>> headersCustomizer =

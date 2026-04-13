@@ -14,9 +14,14 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': {
+      '/admin': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+      },
+      '/auth/login': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: () => '/login',
       },
     },
   },

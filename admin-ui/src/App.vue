@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { fetchAdmin } from '@/shared/adminApi'
 import TopBar from './components/TopBar.vue'
 import SideMenu from './components/SideMenu.vue'
 import SettingsPage from './components/SettingsPage.vue'
@@ -7,6 +8,7 @@ import ClientsPage from './components/ClientsPage.vue'
 import UsersPage from './components/UsersPage.vue'
 import GroupsPage from './components/GroupsPage.vue'
 import RolesPage from './components/RolesPage.vue'
+import LoginPage from './components/LoginPage.vue'
 
 const activeView = ref('settings')
 const theme = ref('light')
@@ -20,6 +22,7 @@ const navItems = [
 ]
 
 const isDarkTheme = computed(() => theme.value === 'dark')
+const isLoginRoute = computed(() => window.location.pathname === '/login')
 
 const settingsForm = ref({
   email: 'admin@cred0.local',
@@ -41,6 +44,18 @@ const updateFullName = (fullName) => {
 const selectView = (viewId) => {
   activeView.value = viewId
 }
+
+onMounted(async () => {
+  if (isLoginRoute.value) {
+    return
+  }
+
+  try {
+    await fetchAdmin('/users')
+  } catch {
+    // fetchAdmin handles login redirect for unauthenticated sessions.
+  }
+})
 </script>
 
 <template>
@@ -48,10 +63,11 @@ const selectView = (viewId) => {
     class="min-h-screen"
     :class="isDarkTheme ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'"
   >
-    <TopBar :is-dark-theme="isDarkTheme" @toggle-theme="toggleTheme" />
+    <TopBar v-if="!isLoginRoute" :is-dark-theme="isDarkTheme" @toggle-theme="toggleTheme" />
 
     <div class="flex min-h-[calc(100vh-4rem)]">
       <SideMenu
+        v-if="!isLoginRoute"
         :is-dark-theme="isDarkTheme"
         :nav-items="navItems"
         :active-view="activeView"
@@ -59,8 +75,10 @@ const selectView = (viewId) => {
       />
 
       <main class="flex-1 p-6 sm:p-8">
+        <LoginPage v-if="isLoginRoute" :is-dark-theme="isDarkTheme" />
+
         <SettingsPage
-          v-if="activeView === 'settings'"
+          v-else-if="activeView === 'settings'"
           :is-dark-theme="isDarkTheme"
           :email="settingsForm.email"
           :full-name="settingsForm.fullName"
@@ -68,11 +86,11 @@ const selectView = (viewId) => {
           @update:full-name="updateFullName"
         />
 
-        <ClientsPage v-if="activeView === 'clients'" :is-dark-theme="isDarkTheme" />
+        <ClientsPage v-else-if="activeView === 'clients'" :is-dark-theme="isDarkTheme" />
 
-        <UsersPage v-if="activeView === 'users'" :is-dark-theme="isDarkTheme" />
-        <GroupsPage v-if="activeView === 'groups'" :is-dark-theme="isDarkTheme" />
-        <RolesPage v-if="activeView === 'roles'" :is-dark-theme="isDarkTheme" />
+        <UsersPage v-else-if="activeView === 'users'" :is-dark-theme="isDarkTheme" />
+        <GroupsPage v-else-if="activeView === 'groups'" :is-dark-theme="isDarkTheme" />
+        <RolesPage v-else-if="activeView === 'roles'" :is-dark-theme="isDarkTheme" />
       </main>
     </div>
   </div>

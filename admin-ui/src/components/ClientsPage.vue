@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getSurfaceThemeClass } from '@/shared/uiClasses'
+import { fetchAdmin } from '@/shared/adminApi'
 import ClientRow from '@/components/clients/ClientRow.vue'
 import ClientForm from '@/components/clients/ClientForm.vue'
 
@@ -10,9 +11,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const CLIENTS_API_URL = `${API_BASE_URL}/api/registered-clients`
 
 const clients = ref([])
 const isLoading = ref(false)
@@ -92,7 +90,7 @@ const loadClients = async () => {
   clearMessages()
   isLoading.value = true
   try {
-    const response = await fetch(CLIENTS_API_URL)
+    const response = await fetchAdmin('/registered-clients')
     if (!response.ok) {
       errorMessage.value = await toErrorMessage(response)
       return
@@ -123,7 +121,7 @@ const saveClient = async () => {
   clearMessages()
   isSaving.value = true
   try {
-    const response = await fetch(CLIENTS_API_URL, {
+    const response = await fetchAdmin('/registered-clients', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -171,7 +169,7 @@ const deleteClient = async (client) => {
   clearMessages()
   deletingClientId.value = client.id
   try {
-    const response = await fetch(`${CLIENTS_API_URL}/${client.id}`, {
+    const response = await fetchAdmin(`/registered-clients/${client.id}`, {
       method: 'DELETE',
     })
     if (!response.ok) {
