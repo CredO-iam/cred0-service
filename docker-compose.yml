@@ -1,0 +1,13 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: cred0-nginx
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    # Useful on Linux; harmless on Docker Desktop (macOS/Windows).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
