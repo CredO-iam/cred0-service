@@ -9,7 +9,7 @@ This task introduces coordinated backend and frontend support for:
 - many-to-many relationships between users, groups, and roles,
 - dedicated admin pages for operational management.
 
-Execution must follow `worklog/0002_TASK_PLAN.md` and `.github/AGENTS.md` constraints:
+Execution must follow `worklog/0002_TASK_PLAN.md` and `../AGENTS.md` constraints:
 - clean layering (`api -> service -> persistence`),
 - no business logic in controllers,
 - mapper utility classes (private constructor + static methods),
@@ -204,5 +204,5 @@ If frontend test tooling is not configured, document manual verification scenari
 - CRUD endpoints and relationship management implemented and validated.
 - `GroupsPage` and `RolesPage` implemented with reusable row/form components.
 - Backend tests for all new groups/roles logic are implemented and passing.
-- Implementation follows `worklog/0002_TASK_PLAN.md` and `.github/AGENTS.md`.
+- Implementation follows `worklog/0002_TASK_PLAN.md` and `../AGENTS.md`.
 

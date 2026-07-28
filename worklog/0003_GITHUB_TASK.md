@@ -6,7 +6,7 @@ Backend currently allows CRUD for users, groups, and roles, but startup does not
 
 Plan `worklog/0003_TASK_PLAN.md` defines this delivery and serves as implementation baseline.
 
-This task follows `.github/AGENTS.md` constraints:
+This task follows `../AGENTS.md` constraints:
 - clean layering,
 - input validation and safe defaults,
 - no new dependencies,

@@ -8,7 +8,7 @@ The repository currently has a clients management flow, but user management is s
 
 Plan `worklog/0001_TASK_PLAN.md` defines this as a coordinated backend + frontend delivery and should be used as the execution baseline.
 
-This task must follow `.github/AGENTS.md` rules:
+This task must follow `../AGENTS.md` rules:
 - clean layering (`api -> service -> persistence`),
 - no business logic inside controllers,
 - dedicated mapper utility classes (private constructor + static methods),
@@ -242,5 +242,5 @@ If frontend automated tests are not configured, document the gap in PR notes wit
 - Users module implemented in backend with API/service/persistence/mappers layers.
 - Users CRUD UI implemented with reusable components and contract-aligned payloads.
 - Backend tests for all new users logic are implemented and passing.
-- Implementation follows `worklog/0001_TASK_PLAN.md` and `.github/AGENTS.md` requirements.
+- Implementation follows `worklog/0001_TASK_PLAN.md` and `../AGENTS.md` requirements.
 

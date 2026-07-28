@@ -4,12 +4,12 @@
 
 The repository has two product layers and changes should be made in the relevant layer(s):
 
-- `admin-ui/` - frontend (Vue 3 + Vite + Tailwind CSS).
+- `admin-ui` - frontend (Vue 3 + Vite + Tailwind CSS).
   - `admin-ui/src/main.js` and `admin-ui/src/App.vue` - frontend entry points.
   - `admin-ui/src/components` - reusable UI components.
   - `admin-ui/src/shared` - shared frontend utilities/constants.
   - `admin-ui/src/style.css` - global styling with Tailwind CSS v4.
-- `core/` - backend layer (Spring Boot).
+- `core` - backend layer (Spring Boot).
   - `core/src/main/java/io/cred0/core` - application source code.
   - `core/src/main/java/io/cred0/core/clients` - client domain/API/config/service/persistence.
   - `core/src/main/java/io/cred0/core/security` - backend security configuration.
@@ -20,6 +20,13 @@ The repository has two product layers and changes should be made in the relevant
 - Follow existing project structure.
 - Do not refactor unrelated code.
 - Do not introduce breaking changes unless requested.
+- Use `CONCEPT.md` as the reusable engineering harness and
+  `PRODUCT_CONTEXT.md` as the authoritative product-specific context. Keep
+  these responsibilities separate when planning, implementing, reviewing, and
+  documenting work.
+- When a product decision changes, update `PRODUCT_CONTEXT.md` (and related
+  requirements/ADRs) rather than encoding the decision as a universal
+  engineering rule in `CONCEPT.md`.
 - All comments must be in English.
 - No non-English text inside code.
 - Keep the root `README.md` up to date when changes affect project capabilities, architecture, repository structure, setup, or operational behavior.
@@ -47,9 +54,9 @@ The repository has two product layers and changes should be made in the relevant
 - Maintain `./worklog/worklog.md` in parallel with a markdown table containing `Number | Date | Short Description`, using ISO date format `YYYY-MM-DD`.
 - Add one worklog row per completed task, reusing the same `{NNNN}` as the related plan/task files.
 
-## Frontend Instructions (`admin-ui/`)
+## Frontend Instructions (`admin-ui`)
 
-- Run frontend commands from `admin-ui/`: `npm install`, `npm run dev`, `npm run build`, `npm run preview`.
+- Run frontend commands from `admin-ui`: `npm install`, `npm run dev`, `npm run build`, `npm run preview`.
 - Use the existing `@` alias for imports from `admin-ui/src` as defined in `admin-ui/vite.config.js` and `admin-ui/jsconfig.json`.
 - Styling is configured through Tailwind CSS v4 via `@import "tailwindcss";` in `admin-ui/src/style.css` and the `@tailwindcss/vite` plugin.
 - When generating frontend UI, pages MUST be container/composition components and MUST NOT keep all markup inline when parts can be extracted.
@@ -62,7 +69,7 @@ The repository has two product layers and changes should be made in the relevant
 - The current frontend stack in `admin-ui/package.json` is Vue 3 + Vite 7 + Tailwind CSS 4.
 - If a dependency change is approved, keep `admin-ui/package-lock.json` in sync.
 
-## Backend Instructions (`core/`)
+## Backend Instructions (`core`)
 
 - In backend code, do not create DDL scripts or database migrations; rely on Hibernate auto table creation.
 - When generating `toEntity`/`fromEntity` or `toDto`/`fromDto` mappings, create dedicated utility classes with a private constructor and static methods; do not make them Spring components.
@@ -78,4 +85,4 @@ The repository has two product layers and changes should be made in the relevant
 
 - All new logic must be covered by unit tests.
 - Do not modify existing tests unless broken.
-- There is currently no test runner or test configuration checked in under `admin-ui/`; do not assume Vitest, Cypress, or Playwright are already set up.
+- There is currently no test runner or test configuration checked in under `admin-ui`; do not assume Vitest, Cypress, or Playwright are already set up.

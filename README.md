@@ -6,6 +6,10 @@ Lightweight, extensible IAM tooling for managing identities, roles, groups, and 
 
 `CredØ` is designed as a compact IAM platform that can evolve from a simple internal access management service into a full authorization core for custom applications and APIs.
 
+The reusable AI engineering process is documented in
+[`CONCEPT.md`](CONCEPT.md), while CredØ-specific product intent and scope
+are maintained separately in [`PRODUCT_CONTEXT.md`](./PRODUCT_CONTEXT.md).
+
 Based on the current repository structure, the project consists of two main parts:
 
 - `admin-ui` — an administrative interface built with `Vue 3 + Vite`
