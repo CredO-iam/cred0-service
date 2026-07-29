@@ -49,7 +49,7 @@ Boot, Spring Security, and standard OAuth2/OIDC concepts.
 - OpenID Connect;
 - identity and user management required by the MVP;
 - clients and client administration required by the MVP;
-- roles and groups where required by the approved MVP model;
+- roles and groups where required by an approved product milestone;
 - an administrative REST API;
 - an administrative UI;
 - Spring-native extension points.
@@ -63,6 +63,124 @@ Phase 1 of the engineering harness.
 - realm-based multi-tenancy;
 - built-in multi-tenancy;
 - a universal proprietary plugin or SPI ecosystem;
+
+### 4.3. First MVP Boundary
+
+The first CredØ MVP exists to prove that:
+
+- standards-based OAuth2 and OpenID Connect protocols work;
+- application integration is straightforward;
+- basic identity and client administration is possible; and
+- the system has a coherent foundation for later extension.
+
+The MVP is complete only when the following developer journey works:
+
+1. Deploy the server with `docker compose up`.
+2. Create a user and an OAuth2 client through the Admin API.
+3. Configure a registered redirect URI.
+4. Start a standard Authorization Code with PKCE flow.
+5. Let the user authenticate and authorize the application.
+6. Exchange the authorization code for access, refresh, and ID tokens.
+7. Validate the ID token signature using the JWKS endpoint.
+8. Call UserInfo with the access token.
+
+#### OAuth2 and OIDC capabilities
+
+Must-have OAuth2 capabilities:
+
+- authorization endpoint and token endpoint;
+- redirect URI validation;
+- PKCE challenge/verifier validation;
+- authorization-code lifecycle and expiration;
+- access-token issuance;
+- refresh-token issuance and refresh;
+- Client Credentials for machine-to-machine integrations.
+
+Must-have OIDC capabilities:
+
+- `/.well-known/openid-configuration`;
+- `/oauth2/jwks`;
+- ID Tokens with `iss`, `sub`, `aud`, `exp`, `iat`, and `nonce` when used;
+- `UserInfo` with at least `sub`, `email`, and `name`.
+
+Device Authorization Grant, Token Exchange, CIBA, JWT Bearer Grant, implicit
+grant, and Resource Owner Password Credentials are outside this MVP.
+
+The protocol surface must include:
+
+- `GET /oauth2/authorize`;
+- `POST /oauth2/token`;
+- `GET /oauth2/jwks`;
+- `GET /.well-known/openid-configuration`;
+- `GET /userinfo`.
+
+#### Identity and claims model
+
+The MVP identity model contains users with an identifier, username/email,
+password hash, enabled state, and extensible attributes. Clients contain a
+client identifier, protected client secret where applicable, redirect URIs,
+grant types, scopes, and enabled state.
+
+The MVP includes named scopes such as `openid`, `profile`, and `email`, and
+roles only. It does not include groups, permission hierarchies, fine-grained
+authorization, or a policy engine. The initial claim contract is:
+
+- ID Token: `sub`, `iss`, `aud`, `exp`, `iat`, `email`, `name`, and `nonce`
+  when applicable;
+- access token: `sub`, `scope`, and roles;
+- UserInfo: `sub`, `email`, and `name`.
+
+#### Administration, persistence, and operations
+
+The MVP is REST-first: the Admin API must support user, client, scope, and
+role administration. Admin UI is a follow-up milestone and is not required
+to prove the first MVP journey. Swagger/OpenAPI documentation may be used as
+the operator-facing interface for the Admin API.
+
+PostgreSQL is the required MVP persistence target; H2 may remain available for
+demo or local test use but is not sufficient as the only MVP database.
+Schema versioning and migration strategy must be resolved during
+architecture planning without violating the repository rule against
+committing DDL or migration scripts.
+
+Passwords must use BCrypt or Argon2id. Secrets and signing keys must come from
+environment variables or external configuration and must never be logged.
+The MVP uses an RSA signing key pair and publishes its public keys through
+JWKS. Key rotation is desirable but may be limited to a documented operational
+procedure.
+
+Spring Actuator health, info, and metrics endpoints are required. The system
+must record a basic audit event model covering at least successful and failed
+authentication, client creation, and token issuance.
+
+#### Testing, deployment, and documentation
+
+The MVP requires unit tests plus automated integration coverage for the full
+journey: client creation, authorization request, login, code issuance, token
+exchange, JWT validation, and UserInfo. Negative coverage must include invalid
+redirect URI, invalid client, expired code, invalid PKCE verifier, invalid
+token, and disabled user.
+
+The deliverable must include an application container, PostgreSQL,
+configuration example, database setup/versioning approach, and a developer
+quick start that obtains the first token in ten minutes. An Admin API guide
+and integration examples for a Spring Boot application and a frontend SPA are
+also required.
+
+#### MVP non-goals
+
+SAML, multi-tenancy, LDAP, federation, social login, MFA, passwordless
+authentication, fine-grained authorization, custom policies, workflow engines,
+plugin marketplaces, enterprise audit UI, clustering, and high availability
+are explicitly outside the MVP.
+
+#### MVP acceptance criteria
+
+The MVP is accepted when a developer can deploy the server locally, create a
+user and client through the Admin API, complete Authorization Code with PKCE,
+receive standards-compatible OAuth2/OIDC tokens, verify the ID Token using
+JWKS, call UserInfo, observe data surviving restart, and run the automated
+integration suite and documented deployment successfully.
 
 ## 5. Deployment and Security-Domain Model
 
@@ -172,6 +290,19 @@ progressively by the harness:
 - What persistence, deployment, security, testing, and documentation
   requirements apply?
 - Which extension points are public and supported?
+
+The first MVP resolves the flow, OIDC, identity, persistence, administration,
+operations, and acceptance boundary as documented in section 4.3. The
+following decisions remain open for architecture planning:
+
+- access-token format and token lifetimes;
+- refresh-token rotation and reuse detection;
+- consent behavior;
+- exact PostgreSQL schema-versioning mechanism;
+- administrator authentication and session transport;
+- RSA key storage and rotation procedure;
+- role assignment and claim naming details;
+- the post-MVP Admin UI milestone.
 
 AI must not silently convert these questions into product requirements.
 
