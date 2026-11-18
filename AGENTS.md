@@ -37,22 +37,18 @@ The repository has two product layers and changes should be made in the relevant
 - For every new feature, implement coordinated updates in both frontend and backend when applicable.
 - Keep frontend behavior and backend contracts in sync (request/response shape, validation, and error handling).
 - If a task adds data fields or business rules, update API, backend domain/service logic, and frontend forms/views together.
+- Plan small changes that deliver one testable user or operator outcome.
+- Keep helpers within their feature until another feature needs the same behavior.
+- For public API changes document compatibility, error responses and input limits where applicable.
 - Follow clean layering.
 - Do not mix business logic with controllers.
 - Avoid framework leakage into domain.
 
-## Planning and Worklog
+## Starting and finishing work
 
-- For any task that changes code (new features, refactoring, bug fixes, structural updates), create planning artifacts before implementing.
-- Two files are mandatory for each code-change task and must share the same number: `./worklog/{NNNN}_TASK_PLAN.md` and `./worklog/{NNNN}_GITHUB_TASK.md`.
-- Use continuous numbering across all tasks (no resets) with zero-padded values (`0001`, `0002`, ...).
-- `*_TASK_PLAN.md` defines execution steps, risks, and readiness checks; `*_GITHUB_TASK.md` defines full implementation requirements and acceptance contract.
-- Use `worklog/0001_TASK_PLAN.md` and `worklog/0001_GITHUB_TASK.md` as the reference level of detail and structure.
-- Keep artifacts linked: each plan must reference its paired detailed task file, and each detailed task must reference its paired plan file.
-- `*_GITHUB_TASK.md` must include at minimum: `Title`, `Background / Context`, `Goal`, `Scope` (`In Scope`, `Out of Scope`), `Detailed Implementation Requirements` (by affected layer), `Acceptance Criteria`, `Assumptions / Open Decisions`, and `Definition of Done`.
-- In `*_GITHUB_TASK.md`, always specify explicit target paths/modules, API/behavior expectations, constraints (including dependency policy), and measurable acceptance criteria.
-- Maintain `./worklog/worklog.md` in parallel with a markdown table containing `Number | Date | Short Description`, using ISO date format `YYYY-MM-DD`.
-- Add one worklog row per completed task, reusing the same `{NNNN}` as the related plan/task files.
+Read the [task workflow](worklog/WORKFLOW.md) before planning, resuming or
+closing a task. It owns the reading order, artifact formats, numbering,
+session handoff, validation commands and completion procedure.
 
 ## Frontend Instructions (`admin-ui`)
 

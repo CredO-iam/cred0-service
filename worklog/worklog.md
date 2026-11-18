@@ -6,3 +6,4 @@
 | 0002 | 2026-04-12 | Groups and Roles management |
 | 0003 | 2026-04-12 | Startup bootstrap for admin user/group/role |
 | 0004 | 2026-07-29 | Define CredØ MVP boundaries and acceptance contract |
+| 0005 | 2026-11-18 | [Adopt the task workflow and reusable worklog templates](0005_AGENT_REPORT.md) |

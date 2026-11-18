@@ -148,7 +148,7 @@ This is a strong IAM-first signal: the system brings up a minimum viable adminis
 | `admin-ui/` | Vue 3 / Vite single-page admin UI |
 | `core/` | Spring Boot backend and authorization core |
 | `core/doc/SPEC.md` | Current specification for the implemented client management module |
-| `worklog/` | Task planning notes and execution history |
+| `worklog/` | [Contributor workflow](worklog/WORKFLOW.md), task templates and [completion index](worklog/worklog.md) |
 
 ## Technology stack
 
