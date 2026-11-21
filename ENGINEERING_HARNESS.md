@@ -1170,7 +1170,7 @@ The documents have different responsibilities:
 
 | Document | Authority |
 |---|---|
-| `CONCEPT.md` | Engineering workflow, AI roles, phases, decisions, dependencies, execution, review, and project memory |
+| `ENGINEERING_HARNESS.md` | Engineering workflow, AI roles, phases, decisions, dependencies, execution, review, and project memory |
 | `PRODUCT_CONTEXT.md` | CredØ product vision, users, scope, constraints, technology direction, and unresolved product questions |
 | Architecture documents and ADRs | Approved technical design decisions |
 | Issues and pull requests | Executable work, implementation details, and delivery status |

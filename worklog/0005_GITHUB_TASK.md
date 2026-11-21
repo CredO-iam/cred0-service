@@ -5,7 +5,7 @@ Adopt the DockMe task lifecycle for CredØ contributors.
 ## Background / Context
 
 The operator requested the workflow identified in the DockMe comparison.
-[Plan](0005_TASK_PLAN.md) · [Engineering harness](../CONCEPT.md), sections 31–37.
+[Plan](0005_TASK_PLAN.md) · [Engineering harness](../ENGINEERING_HARNESS.md), sections 31–37.
 
 ## Goal
 

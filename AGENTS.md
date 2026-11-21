@@ -20,13 +20,13 @@ The repository has two product layers and changes should be made in the relevant
 - Follow existing project structure.
 - Do not refactor unrelated code.
 - Do not introduce breaking changes unless requested.
-- Use `CONCEPT.md` as the reusable engineering harness and
+- Use `ENGINEERING_HARNESS.md` as the reusable engineering harness and
   `PRODUCT_CONTEXT.md` as the authoritative product-specific context. Keep
   these responsibilities separate when planning, implementing, reviewing, and
   documenting work.
 - When a product decision changes, update `PRODUCT_CONTEXT.md` (and related
   requirements/ADRs) rather than encoding the decision as a universal
-  engineering rule in `CONCEPT.md`.
+  engineering rule in `ENGINEERING_HARNESS.md`.
 - All comments must be in English.
 - No non-English text inside code.
 - Keep the root `README.md` up to date when changes affect project capabilities, architecture, repository structure, setup, or operational behavior.

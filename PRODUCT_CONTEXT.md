@@ -3,9 +3,9 @@
 ## 1. Purpose
 
 This document contains product-specific context for CredØ. It is used by the
-AI-driven engineering harness described in [`CONCEPT.md`](CONCEPT.md).
+AI-driven engineering harness described in [`ENGINEERING_HARNESS.md`](ENGINEERING_HARNESS.md).
 
-`CONCEPT.md` defines how engineering work is organized. This document defines
+`ENGINEERING_HARNESS.md` defines how engineering work is organized. This document defines
 what product is being built, why it is being built, and which product
 constraints are currently known.
 
@@ -18,28 +18,25 @@ architecture phases unless explicitly confirmed here.
 CredØ is a focused and extensible identity and authorization service for
 modern OAuth2 and OpenID Connect use cases.
 
-The product should provide the capabilities needed to manage identities,
-clients, and access rules, and to issue standards-based authorization
-artifacts. It should remain:
+The self-hosted product will ship as an open-source Docker image containing
+the service and its administrative frontend. Operators should be able to
+start it with documented defaults and administer identities and OAuth2
+clients immediately. The default distribution focuses on OAuth2 and OpenID
+Connect. Additional modules may extend it with protocols such as SAML.
 
-- simple to use and configure;
-- easy to understand and operate;
-- familiar to Java and Spring developers;
-- focused on coherent core capabilities;
-- extensible without requiring a proprietary platform.
-
-Its product direction is:
-
-> Simple by default. Powerful when needed.
+The hosted product will run the same CredØ service. Free users can create
+and manage their own OAuth2 clients within the shared SaaS environment.
+Paid customers can provision an isolated CredØ instance and open its own
+admin UI from the common SaaS admin portal. The portal is the entry point
+for hosted customers. The instance UI administers an individual service.
 
 ## 3. Intended Users
 
-The primary audience is developers and teams that need an OAuth2/OIDC
-authorization service and prefer a focused Spring-native solution over a large
-IAM platform.
-
-The product should be understandable to developers who already know Spring
-Boot, Spring Security, and standard OAuth2/OIDC concepts.
+Application developers integrate with CredØ through OAuth2 and OpenID
+Connect. Operators can run the open-source distribution themselves.
+Teams choosing managed hosting can use shared client administration or
+provision a dedicated instance. Developers extending the service use
+familiar Java and Spring mechanisms.
 
 ## 4. Confirmed Scope Decisions
 
@@ -54,12 +51,11 @@ Boot, Spring Security, and standard OAuth2/OIDC concepts.
 - an administrative UI;
 - Spring-native extension points.
 
-The exact MVP capability set is to be discovered and confirmed during
-Phase 1 of the engineering harness.
+Section 4.3 defines the first engineering milestone. The combined image with
+its admin UI and the hosted offerings are wider product delivery goals.
 
 ### 4.2. Explicitly Out of Scope
 
-- SAML;
 - realm-based multi-tenancy;
 - built-in multi-tenancy;
 - a universal proprietary plugin or SPI ecosystem;
@@ -169,7 +165,7 @@ also required.
 
 #### MVP non-goals
 
-SAML, multi-tenancy, LDAP, federation, social login, MFA, passwordless
+Bundled SAML support, multi-tenancy, LDAP, federation, social login, MFA, passwordless
 authentication, fine-grained authorization, custom policies, workflow engines,
 plugin marketplaces, enterprise audit UI, clustering, and high availability
 are explicitly outside the MVP.
@@ -188,6 +184,10 @@ One running CredØ instance represents one independent security domain. An
 instance has one user base, one set of clients, one set of roles and related
 security data, and one issuer/security context.
 
+In the shared SaaS environment, a customer manages the OAuth2 clients they
+own. Client ownership and access enforcement require a hosted design.
+Each paid isolated instance has its own security domain.
+
 Independent security domains should be deployed as separate instances rather
 than represented as realms inside one instance.
 
@@ -197,7 +197,7 @@ unless this decision is explicitly revisited and recorded.
 ## 6. Product Principles
 
 These principles guide product decisions and are distinct from the universal
-engineering principles in `CONCEPT.md`.
+engineering principles in `ENGINEERING_HARNESS.md`.
 
 ### 6.1. Convention Over Configuration
 
@@ -278,22 +278,7 @@ discover the MVP requirements and unresolved product decisions.
 
 ## 10. Open Product Questions
 
-The following questions are intentionally unresolved and must be handled
-progressively by the harness:
-
-- Which OAuth2 flows are required for the MVP?
-- Which OIDC capabilities are required?
-- What user, client, role, group, scope, permission, and authority model is
-  required?
-- How are authentication, passwords, tokens, and claims managed?
-- Which Admin API and Admin UI capabilities are required?
-- What persistence, deployment, security, testing, and documentation
-  requirements apply?
-- Which extension points are public and supported?
-
-The first MVP resolves the flow, OIDC, identity, persistence, administration,
-operations, and acceptance boundary as documented in section 4.3. The
-following decisions remain open for architecture planning:
+Section 4.3 establishes the MVP acceptance boundary. Open design decisions include
 
 - access-token format and token lifetimes;
 - refresh-token rotation and reuse detection;
@@ -310,7 +295,7 @@ AI must not silently convert these questions into product requirements.
 
 The relationship between the two documents is normative:
 
-1. Read `CONCEPT.md` to determine the engineering process.
+1. Read `ENGINEERING_HARNESS.md` to determine the engineering process.
 2. Read `PRODUCT_CONTEXT.md` to determine CredØ product intent and constraints.
 3. During each phase, derive work from both documents.
 4. Product decisions must not be added to the generic harness merely because
@@ -325,11 +310,8 @@ Product Context document.
 
 ## 12. Initial Product Brief
 
-Create a focused identity and authorization service for OAuth2 and OpenID
-Connect. Provide clear administration of identities, clients, and access
-rules, while keeping the product simple to use, configure, understand, and
-operate for Java/Spring developers. Use Spring Boot and Spring Authorization
-Server for the backend direction and Vue 3 for the frontend direction. Exclude
-SAML and realm-based multi-tenancy. Prefer separate instances for separate
-security domains and use Spring-native extension mechanisms instead of a
-custom universal plugin platform.
+Deliver an open-source IAM service and admin UI in one ready-to-run Docker
+image. Offer the same service through SaaS with shared OAuth2 client
+management on the free tier and isolated instances accessible from the
+common admin portal on the paid tier. Keep the default protocol set focused
+on OAuth2 and OpenID Connect and allow additional protocol modules.

@@ -123,32 +123,32 @@ Used by `JpaRegisteredClientRepository` as the persistence adapter behind the Sp
 
 ## 3. Client Management REST API
 
-Base path: `/api/registered-clients`
+Base path: `/admin/registered-clients`
 
 ### 3.1 List
 
-`GET /api/registered-clients`
+`GET /admin/registered-clients`
 
 - `200 OK`
 - Response body: `RegisteredClientsResponse`
 
 ### 3.2 Get by Internal ID
 
-`GET /api/registered-clients/{id}`
+`GET /admin/registered-clients/{id}`
 
 - `200 OK` with `RegisteredClientDto`
 - `404 Not Found` if no client exists for `id`
 
 ### 3.3 Get by OAuth2 Client ID
 
-`GET /api/registered-clients/by-client-id/{clientId}`
+`GET /admin/registered-clients/by-client-id/{clientId}`
 
 - `200 OK` with `RegisteredClientDto`
 - `404 Not Found` if no client exists for `clientId`
 
 ### 3.4 Create or Update
 
-`POST /api/registered-clients`
+`POST /admin/registered-clients`
 
 - Request body: `RegisteredClientDto`
 - Persists via `JpaRegisteredClientRepository.save`
@@ -157,7 +157,7 @@ Base path: `/api/registered-clients`
 
 ### 3.5 Delete
 
-`DELETE /api/registered-clients/{id}`
+`DELETE /admin/registered-clients/{id}`
 
 - `204 No Content`
 
@@ -174,9 +174,9 @@ Implemented in `SecurityConfig`:
 
 ### 4.2 Client Management API Security State
 
-For registered-client management endpoints, no dedicated API-level authorization rules are defined in the `clients` module code.
+The application security chain requires an authenticated session for `/admin/**`, including registered-client management. The current rule checks authentication only. Hosted client ownership is a future SaaS requirement.
 
 ### 4.3 Authorization Server Runtime Endpoints
 
-The service includes Spring Authorization Server runtime endpoints through framework configuration. This specification focuses only on implemented client-management behavior.
+The repository adapter supplies registered clients to Spring Authorization Server. The [MVP acceptance contract](../../PRODUCT_CONTEXT.md) defines the separate end-to-end checks for token issuance and OpenID Connect.
 
