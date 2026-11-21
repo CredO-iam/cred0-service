@@ -62,6 +62,8 @@ its admin UI and the hosted offerings are wider product delivery goals.
 
 ### 4.3. First MVP Boundary
 
+[Task 0004 acceptance contract](worklog/0004_GITHUB_TASK.md)
+
 The first CredØ MVP exists to prove that:
 
 - standards-based OAuth2 and OpenID Connect protocols work;
@@ -141,6 +143,10 @@ committing DDL or migration scripts.
 
 Passwords must use BCrypt or Argon2id. Secrets and signing keys must come from
 environment variables or external configuration and must never be logged.
+Admin API responses and logs must exclude passwords, client secrets, tokens,
+and other credential values. The token endpoint returns issued tokens to the
+client as described in the developer journey above.
+
 The MVP uses an RSA signing key pair and publishes its public keys through
 JWKS. Key rotation is desirable but may be limited to a documented operational
 procedure.
