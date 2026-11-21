@@ -29,5 +29,5 @@ For the optional local Nginx proxy, run `docker compose up` from the repository 
 ## Contributor references
 
 - [Registered-client API specification](core/doc/SPEC.md)
-- [Engineering process](CONCEPT.md)
+- [Engineering process](ENGINEERING_HARNESS.md)
 - [Task workflow](worklog/WORKFLOW.md) and [completed work](worklog/worklog.md)

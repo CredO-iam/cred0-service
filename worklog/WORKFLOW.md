@@ -3,7 +3,7 @@
 ## Start or resume
 
 Read [repository rules](../AGENTS.md) and the relevant section of the
-[engineering harness](../CONCEPT.md). The [product context](../PRODUCT_CONTEXT.md)
+[engineering harness](../ENGINEERING_HARNESS.md). The [product context](../PRODUCT_CONTEXT.md)
 owns scope and product decisions. The [README](../README.md) describes the shipped
 surface and local setup. Check the owning contract and relevant ADR before editing code.
 

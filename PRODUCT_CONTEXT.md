@@ -3,9 +3,9 @@
 ## 1. Purpose
 
 This document contains product-specific context for CredØ. It is used by the
-AI-driven engineering harness described in [`CONCEPT.md`](CONCEPT.md).
+AI-driven engineering harness described in [`ENGINEERING_HARNESS.md`](ENGINEERING_HARNESS.md).
 
-`CONCEPT.md` defines how engineering work is organized. This document defines
+`ENGINEERING_HARNESS.md` defines how engineering work is organized. This document defines
 what product is being built, why it is being built, and which product
 constraints are currently known.
 
@@ -197,7 +197,7 @@ unless this decision is explicitly revisited and recorded.
 ## 6. Product Principles
 
 These principles guide product decisions and are distinct from the universal
-engineering principles in `CONCEPT.md`.
+engineering principles in `ENGINEERING_HARNESS.md`.
 
 ### 6.1. Convention Over Configuration
 
@@ -295,7 +295,7 @@ AI must not silently convert these questions into product requirements.
 
 The relationship between the two documents is normative:
 
-1. Read `CONCEPT.md` to determine the engineering process.
+1. Read `ENGINEERING_HARNESS.md` to determine the engineering process.
 2. Read `PRODUCT_CONTEXT.md` to determine CredØ product intent and constraints.
 3. During each phase, derive work from both documents.
 4. Product decisions must not be added to the generic harness merely because
