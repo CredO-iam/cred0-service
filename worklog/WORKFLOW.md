@@ -38,9 +38,8 @@ Keep the report with its plan and task so another session can resume directly.
 
 For operator-owned work provide the next actionable step and its expected result.
 Wait for confirmation before dependent work. Identify operator-reported evidence
-and keep credentials out of tasks, logs and chat. After a correction update the
-owning contract, affected active artifacts and dated report. Preserve historical
-decisions and mark superseded guidance explicitly.
+and keep credentials out of tasks, logs and chat. For corrections to completed work or recurring mistakes, follow the
+[lessons-learned procedure](../.agents/skills/lessons-learned/SKILL.md).
 
 ## Verify the outcome
 
