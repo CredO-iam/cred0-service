@@ -4,7 +4,7 @@ Restore the lessons-learned procedure omitted from the DockMe workflow adoption.
 
 ## Background / Context
 
-The operator identified the omission after task 0005. [Plan](0008_TASK_PLAN.md)
+The operator identified the omission after task 0005. [Plan](0008_TASK_PLAN.md), revision 2
 
 ## Goal
 
@@ -22,18 +22,17 @@ Global installation, changes to product behavior and retrospective edits to comp
 
 ## Detailed Implementation Requirements
 
-Use a canonical SKILL.md under .github/skills and a relative discovery symlink
-under .agents/skills. Route from AGENTS.md and worklog/WORKFLOW.md. Use the
+Track SKILL.md directly under .agents/skills/lessons-learned/. Route from AGENTS.md and worklog/WORKFLOW.md. Use the
 numbered agent report for dated evidence. No dependencies or API changes.
 
 ## Acceptance Criteria
 
-Both paths resolve to the same validated package. The workflow identifies when
+The discovery directory contains the validated regular file. The workflow identifies when
 to invoke the procedure and how to use it if absent from the registry.
 
 ## Assumptions / Open Decisions
 
-Agent-owned repository maintenance. Follow DockMe's project-local packaging.
+Agent-owned repository maintenance. Codex is the intended consumer.
 
 ## Definition of Done
 

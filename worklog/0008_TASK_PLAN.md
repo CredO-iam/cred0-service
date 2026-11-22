@@ -8,3 +8,8 @@
 
 The source skill and the local workflow are available. Check that both paths resolve
 to one maintained procedure and that all instructions work from this repository.
+
+## Revision 2 · 2026-11-22
+
+The operator retired GitHub Copilot. Store the skill directly in the Codex discovery directory.
+- [x] [Agent] Verify the regular file, its metadata and the updated documentation paths.

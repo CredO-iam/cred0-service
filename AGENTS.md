@@ -51,7 +51,7 @@ closing a task. It owns the reading order, artifact formats, numbering,
 session handoff, validation commands and completion procedure.
 
 For corrections to completed work or recurring mistakes, apply the
-[lessons-learned skill](.github/skills/lessons-learned/SKILL.md). If the skill
+[lessons-learned skill](.agents/skills/lessons-learned/SKILL.md). If the skill
 is absent from the session registry, read and follow the linked file directly.
 
 ## Frontend Instructions (`admin-ui`)
