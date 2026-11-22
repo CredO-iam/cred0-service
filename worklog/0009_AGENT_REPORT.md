@@ -25,3 +25,5 @@ The security review found that the default authentication event publisher skips 
 Validation used Temurin 21 and Gradle 9.4.0. The checkout omits the ignored wrapper JAR, so the official matching wrapper was supplied locally for the run. From core, `./gradlew test` ran 53 tests. All five new tests passed. Two existing tests failed: `GroupEntityMapperTest.toResponseDtoMapsRelationshipIds` and `RoleEntityMapperTest.toResponseDtoMapsRelationshipIds`. Both failed identically in an isolated checkout of origin/main at 3fd098b. The base response mapper returns empty relationship lists. Reconcile the expected read contract before changing the mappers or their tests. The full-suite gate is pending.
 
 A separate run of `./gradlew test --tests '*PasswordAuthenticationAuditTest' --tests '*PasswordLoginAuditIntegrationTest'` passed. Final security review confirmed the mapping and regression coverage. Staged whitespace and local task links passed validation.
+
+Submitted [PR 10](https://github.com/CredO-iam/cred0-service/pull/10). GitHub reported no CI checks. Merge and full-suite validation are pending.
