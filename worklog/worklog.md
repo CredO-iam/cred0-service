@@ -9,3 +9,4 @@
 | 0005 | 2026-11-18 | [Adopt the task workflow and reusable worklog templates](0005_AGENT_REPORT.md) |
 | 0006 | 2026-11-21 | [Align product vision and distribution documentation](0006_AGENT_REPORT.md) |
 | 0007 | 2026-11-21 | [Rename the engineering harness](0007_AGENT_REPORT.md) |
+| 0008 | 2026-11-22 | [Restore the lessons-learned skill](0008_AGENT_REPORT.md) |

@@ -50,6 +50,10 @@ Read the [task workflow](worklog/WORKFLOW.md) before planning, resuming or
 closing a task. It owns the reading order, artifact formats, numbering,
 session handoff, validation commands and completion procedure.
 
+For corrections to completed work or recurring mistakes, apply the
+[lessons-learned skill](.github/skills/lessons-learned/SKILL.md). If the skill
+is absent from the session registry, read and follow the linked file directly.
+
 ## Frontend Instructions (`admin-ui`)
 
 - Run frontend commands from `admin-ui`: `npm install`, `npm run dev`, `npm run build`, `npm run preview`.
