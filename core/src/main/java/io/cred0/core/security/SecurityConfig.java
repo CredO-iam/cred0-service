@@ -1,10 +1,16 @@
 package io.cred0.core.security;
 
+import java.util.Map;
+
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.event.AuthenticationFailureServiceExceptionEvent;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -44,6 +50,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/admin/**", LOGIN_ENDPOINT));
 
         return http.build();
+    }
+
+    @Bean
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher events) {
+        var publisher = new DefaultAuthenticationEventPublisher(events);
+        publisher.setAdditionalExceptionMappings(Map.of(
+                InternalAuthenticationServiceException.class, AuthenticationFailureServiceExceptionEvent.class));
+        return publisher;
     }
 
     @Bean

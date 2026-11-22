@@ -18,6 +18,8 @@ The Java 21 backend in [core](core/) uses Spring Boot, Spring Security and JPA. 
 
 Local development uses H2 in memory and recreates the schema at startup. The first MVP requires PostgreSQL persistence and an end-to-end Authorization Code flow with PKCE, ID token signature verification and UserInfo. The combined application image and SaaS offerings are planned deliverables.
 
+Password authentication writes one INFO record to the application log for each accepted or rejected login. Filter for `event=password_authentication` and read `outcome=success` or `outcome=failure`. These records contain only the event name and outcome in their message.
+
 ## Run locally
 
 1. In `core/`, run `./gradlew bootRun` with Java 21. The bootstrap account is configured with `CRED0_BOOTSTRAP_ADMIN_USERNAME` and `CRED0_BOOTSTRAP_ADMIN_PASSWORD`. Local defaults appear in the [application configuration](core/src/main/resources/application.yaml).
